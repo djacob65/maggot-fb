@@ -7,8 +7,8 @@ FBIN=$MYDIR/bin/filebrowser
 # Path to the database
 FB_DATABASE=$MYDIR/etc/database.db
 
-# Path to the data root
-FB_DATADIR=/opt/data
+# Users file
+FB_USERS=$MYDIR/etc/users.json
 
 # Local HTTP Port for web application
 FB_PORT=8088
@@ -24,15 +24,19 @@ usage() { echo "usage: sh $0 start|stop|restart";  exit 1; }
 
 case "$CMD" in
    start)
-        echo "Lauching ... "
+	[ -f $FB_USERS ] && echo -n "Import users ... " && $FBIN users import $FB_USERS -d $FB_DATABASE --replace && echo OK
+	BACKUP=`echo $(basename $FB_USERS) | sed -e "s/json/backup.json/"`
+	[ -f $BACKUP ] && mv -f $BACKUP $MYDIR/etc/
+        echo -n "Lauching ... "
         $FBIN -d $FB_DATABASE -p $FB_PORT -l $FB_LOG &
         [ $? -eq 0 ] && echo OK
         ;;
    stop)
-        echo "Stopping ... "
+        echo -n "Stopping ... "
         PID=$(ps x | grep filebrowser | grep -v grep | sed -e "s/^ *//" | cut -d' ' -f1)
         kill -9 $PID
         [ $? -eq 0 ] && echo OK
+	echo -n "Export users ... " && $FBIN users export $FB_USERS -d $FB_DATABASE && echo OK
         ;;
    restart)
         ( sh $0 stop ; sh $0 start )
