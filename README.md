@@ -33,6 +33,6 @@ https://filebrowser.org/
 #### Github
 https://github.com/filebrowser/filebrowser
 
-#### Release - v2.24.0
-https://github.com/filebrowser/filebrowser/releases/tag/v2.24.0
+#### Releases
+https://github.com/filebrowser/filebrowser/releases/
 
